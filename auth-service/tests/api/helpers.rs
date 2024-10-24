@@ -19,7 +19,7 @@ impl TestApp {
             RwLock::new(HashmapUserStore {
                 users: HashMap::new(),
             }));
-            
+
         let app_state = AppState::new(user_store);
         let app = Application::build( app_state, "127.0.0.1:0")
         .await
@@ -41,9 +41,12 @@ impl TestApp {
         .expect("Failed to execute request.")
     }
 
-    pub async fn login(&self) -> reqwest::Response {
+    pub async fn login<Body>(&self, body: &Body) -> reqwest::Response 
+    where 
+        Body: serde::Serialize, {
         self.http_client
         .post(&format!("{}/login", &self.address))
+        .json(body)
         .send()
         .await
         .expect("Failed to execute request.")
