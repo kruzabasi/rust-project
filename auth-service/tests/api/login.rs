@@ -16,7 +16,7 @@ async fn should_return_422_if_malformed_credentials() {
     ];
 
     for test_case in test_cases {
-        let response = app.login(&test_case).await;
+        let response = app.post_login(&test_case).await;
         assert_eq!(response.status().as_u16(), 422, "Failed for input: {:?}", test_case);
     }
 }
@@ -37,7 +37,7 @@ async fn should_return_400_if_invalid_input() {
     ];
 
     for test_case in test_cases {
-        let response = app.login(&test_case).await;
+        let response = app.post_login(&test_case).await;
         assert_eq!(response.status().as_u16(), 400, "Failed for input: {:?}", test_case);
     }
 }
@@ -45,7 +45,7 @@ async fn should_return_400_if_invalid_input() {
 #[tokio::test]
 async fn should_return_401_if_incorrect_credentials() {
     let app = TestApp::new().await;
-    let response = app.login(&serde_json::json!({
+    let response = app.post_login(&serde_json::json!({
         "email": "invalid_email@example.com",
         "password": "invalid_password"
     })).await;
@@ -73,7 +73,7 @@ async fn should_return_200_if_valid_credentials_and_2fa_disabled() {
         "password": "password123",
     });
 
-    let response = app.login(&login_body).await;
+    let response = app.post_login(&login_body).await;
 
     assert_eq!(response.status().as_u16(), 200);
 
